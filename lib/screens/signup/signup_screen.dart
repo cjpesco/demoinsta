@@ -1,5 +1,6 @@
 import 'package:demoinsta/repositories/repositories.dart';
 import 'package:demoinsta/screens/signup/cubit/signup_cubit.dart';
+import 'package:demoinsta/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -28,11 +29,11 @@ class SignupScreen extends StatelessWidget {
           listener: (context, state) {
             if (state.status == SignupStatus.error) {
               showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                        title: Text('Error'),
-                        content: Text(state.failure.message),
-                      ));
+                context: context,
+                builder: (context) => ErrorDialog(
+                  content: state.failure.message,
+                ),
+              );
             }
           },
           builder: (context, state) {
