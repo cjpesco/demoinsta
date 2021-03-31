@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'config/custom_router.dart';
 import 'package:demoinsta/screens/screens.dart';
 
-Future main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   EquatableConfig.stringify = kDebugMode;
@@ -27,6 +27,9 @@ class MyApp extends StatelessWidget {
         ),
         RepositoryProvider<UserRepository>(
           create: (_) => UserRepository(),
+        ),
+        RepositoryProvider<StorageRepository>(
+          create: (_) => StorageRepository(),
         ),
       ],
       child: MultiBlocProvider(
