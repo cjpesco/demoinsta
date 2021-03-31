@@ -1,7 +1,11 @@
+import 'package:demoinsta/blocs/blocs.dart';
 import 'package:demoinsta/config/custom_router.dart';
 import 'package:demoinsta/enums/enums.dart';
+import 'package:demoinsta/repositories/repositories.dart';
+import 'package:demoinsta/screens/profile/bloc/profile_bloc.dart';
 import 'package:demoinsta/screens/screens.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TabNavigator extends StatelessWidget {
   static const String tabNavigatorRoot = '/';
@@ -47,7 +51,14 @@ class TabNavigator extends StatelessWidget {
       case BottomNavItem.notifications:
         return NotificationsScreen();
       case BottomNavItem.profile:
-        return ProfileScreen();
+        return BlocProvider<ProfileBloc>(
+          create: (_) => ProfileBloc(
+            userRepository: context.read<UserRepository>(),
+            authBloc: context.read<AuthBloc>(),
+          )..add(
+              ProfileLoadUser(userId: context.read<AuthBloc>().state.user.uid)),
+          child: ProfileScreen(),
+        );
       default:
         return Scaffold();
     }
