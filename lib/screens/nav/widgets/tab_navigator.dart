@@ -2,6 +2,7 @@ import 'package:demoinsta/blocs/blocs.dart';
 import 'package:demoinsta/config/custom_router.dart';
 import 'package:demoinsta/enums/enums.dart';
 import 'package:demoinsta/repositories/repositories.dart';
+import 'package:demoinsta/screens/create_post/cubit/create_post_cubit.dart';
 import 'package:demoinsta/screens/profile/bloc/profile_bloc.dart';
 import 'package:demoinsta/screens/screens.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,14 @@ class TabNavigator extends StatelessWidget {
       case BottomNavItem.search:
         return SearchScreen();
       case BottomNavItem.create:
-        return CreatePostScreen();
+        return BlocProvider<CreatePostCubit>(
+          create: (context) => CreatePostCubit(
+            postRepository: context.read<PostRepository>(),
+            storageRepository: context.read<StorageRepository>(),
+            authBloc: context.read<AuthBloc>(),
+          ),
+          child: CreatePostScreen(),
+        );
       case BottomNavItem.notifications:
         return NotificationsScreen();
       case BottomNavItem.profile:
