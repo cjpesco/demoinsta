@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:demoinsta/helpers/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,7 +9,6 @@ import 'package:demoinsta/screens/profile/bloc/profile_bloc.dart';
 import 'package:demoinsta/widgets/error_dialog.dart';
 import 'package:demoinsta/widgets/widgets.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
 
 class EditProfileScreenArgs {
   final BuildContext context;
