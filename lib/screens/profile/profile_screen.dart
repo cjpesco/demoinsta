@@ -1,13 +1,34 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:demoinsta/blocs/blocs.dart';
+import 'package:demoinsta/repositories/repositories.dart';
 import 'package:demoinsta/screens/profile/bloc/profile_bloc.dart';
 import 'package:demoinsta/screens/profile/widgets/widgets.dart';
 import 'package:demoinsta/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+class ProfileScreenArgs {
+  final String userId;
+
+  const ProfileScreenArgs({@required this.userId});
+}
+
 class ProfileScreen extends StatefulWidget {
   static const String routeName = '/profile';
+
+  static Route route({@required ProfileScreenArgs args}) {
+    return MaterialPageRoute(
+      settings: const RouteSettings(name: routeName),
+      builder: (context) => BlocProvider<ProfileBloc>(
+        create: (_) => ProfileBloc(
+          userRepository: context.read<UserRepository>(),
+          postRepository: context.read<PostRepository>(),
+          authBloc: context.read<AuthBloc>(),
+        )..add(ProfileLoadUser(userId: args.userId)),
+        child: ProfileScreen(),
+      ),
+    );
+  }
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -148,11 +169,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
                           final post = state.posts[index];
-                          return Container(
-                            margin: EdgeInsets.all(10.0),
-                            height: 100.0,
-                            width: double.infinity,
-                            color: Colors.red,
+                          return PostView(
+                            post: post,
+                            isLiked: false,
                           );
                         },
                         childCount: state.posts.length,
