@@ -11,6 +11,28 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
+  ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController()
+      ..addListener(() {
+        if (_scrollController.offset >=
+                _scrollController.position.maxScrollExtent &&
+            !_scrollController.position.outOfRange &&
+            context.read<FeedBloc>().state.status != FeedStatus.paginating) {
+          context.read<FeedBloc>().add(FeedPaginatePosts());
+        }
+      });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<FeedBloc, FeedState>(
@@ -20,6 +42,12 @@ class _FeedScreenState extends State<FeedScreen> {
             context: context,
             builder: (context) => ErrorDialog(content: state.failure.message),
           );
+        } else if (state.status == FeedStatus.paginating) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Theme.of(context).primaryColor,
+            duration: const Duration(seconds: 1),
+            content: const Text('Fetching more posts'),
+          ));
         }
       },
       builder: (context, state) {
@@ -52,6 +80,7 @@ class _FeedScreenState extends State<FeedScreen> {
             return true;
           },
           child: ListView.builder(
+            controller: _scrollController,
             itemCount: state.posts.length,
             itemBuilder: (BuildContext context, int index) {
               final post = state.posts[index];
