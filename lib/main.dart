@@ -1,5 +1,6 @@
 import 'package:demoinsta/blocs/auth/auth_bloc.dart';
 import 'package:demoinsta/blocs/simple_bloc_observer.dart';
+import 'package:demoinsta/cubits/cubits.dart';
 import 'package:demoinsta/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -40,6 +41,12 @@ class MyApp extends StatelessWidget {
           BlocProvider<AuthBloc>(
             create: (context) =>
                 AuthBloc(authRepository: context.read<AuthRepository>()),
+          ),
+          BlocProvider<LikedPostsCubit>(
+            create: (context) => LikedPostsCubit(
+              postRepository: context.read<PostRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            ),
           ),
         ],
         child: MaterialApp(

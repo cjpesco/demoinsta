@@ -1,5 +1,6 @@
 import 'package:demoinsta/blocs/blocs.dart';
 import 'package:demoinsta/config/custom_router.dart';
+import 'package:demoinsta/cubits/cubits.dart';
 import 'package:demoinsta/enums/enums.dart';
 import 'package:demoinsta/repositories/repositories.dart';
 import 'package:demoinsta/screens/create_post/cubit/create_post_cubit.dart';
@@ -50,6 +51,7 @@ class TabNavigator extends StatelessWidget {
           create: (context) => FeedBloc(
             postRepository: context.read<PostRepository>(),
             authBloc: context.read<AuthBloc>(),
+            likedPostsCubit: context.read<LikedPostsCubit>(),
           )..add(FeedFetchPosts()),
           child: FeedScreen(),
         );
@@ -77,6 +79,7 @@ class TabNavigator extends StatelessWidget {
             userRepository: context.read<UserRepository>(),
             postRepository: context.read<PostRepository>(),
             authBloc: context.read<AuthBloc>(),
+            likedPostsCubit: context.read<LikedPostsCubit>(),
           )..add(
               ProfileLoadUser(userId: context.read<AuthBloc>().state.user.uid)),
           child: ProfileScreen(),

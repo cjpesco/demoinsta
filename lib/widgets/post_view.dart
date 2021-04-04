@@ -8,11 +8,15 @@ import 'package:demoinsta/extensions/extensions.dart';
 class PostView extends StatelessWidget {
   final Post post;
   final bool isLiked;
+  final VoidCallback onLike;
+  final bool recentlyLiked;
 
   const PostView({
     Key key,
     @required this.post,
     @required this.isLiked,
+    @required this.onLike,
+    this.recentlyLiked = false,
   }) : super(key: key);
 
   @override
@@ -49,7 +53,7 @@ class PostView extends StatelessWidget {
           ),
         ),
         GestureDetector(
-          onDoubleTap: () {},
+          onDoubleTap: onLike,
           child: CachedNetworkImage(
             height: MediaQuery.of(context).size.height / 2.25,
             width: double.infinity,
@@ -66,7 +70,7 @@ class PostView extends StatelessWidget {
                       color: Colors.red,
                     )
                   : const Icon(Icons.favorite_outline),
-              onPressed: () {},
+              onPressed: onLike,
             ),
             IconButton(
               icon: const Icon(Icons.comment_outlined),
@@ -80,7 +84,7 @@ class PostView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                '${post.likes} likes',
+                '${recentlyLiked ? post.likes + 1 : post.likes} likes',
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                 ),

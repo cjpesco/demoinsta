@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:demoinsta/blocs/blocs.dart';
+import 'package:demoinsta/cubits/cubits.dart';
 import 'package:demoinsta/models/models.dart';
 import 'package:demoinsta/repositories/repositories.dart';
 
@@ -14,12 +15,15 @@ part 'feed_state.dart';
 class FeedBloc extends Bloc<FeedEvent, FeedState> {
   final PostRepository _postRepository;
   final AuthBloc _authBloc;
+  final LikedPostsCubit _likedPostsCubit;
 
   FeedBloc({
     @required PostRepository postRepository,
     @required AuthBloc authBloc,
+    @required LikedPostsCubit likedPostsCubit,
   })  : _postRepository = postRepository,
         _authBloc = authBloc,
+        _likedPostsCubit = likedPostsCubit,
         super(FeedState.initial());
 
   @override
@@ -37,6 +41,15 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     try {
       final posts =
           await _postRepository.getUserFeed(userId: _authBloc.state.user.uid);
+
+      _likedPostsCubit.clearAllLikedPosts();
+
+      final likedPostsIds = await _postRepository.getLikedPostsIds(
+        userId: _authBloc.state.user.uid,
+        posts: posts,
+      );
+      _likedPostsCubit.updateLikedPosts(postIds: likedPostsIds);
+
       yield state.copyWith(posts: posts, status: FeedStatus.loaded);
     } catch (err) {
       yield state.copyWith(
@@ -57,6 +70,12 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
       );
 
       final updatedPosts = List<Post>.from(state.posts)..addAll(posts);
+
+      final likedPostsIds = await _postRepository.getLikedPostsIds(
+        userId: _authBloc.state.user.uid,
+        posts: posts,
+      );
+      _likedPostsCubit.updateLikedPosts(postIds: likedPostsIds);
 
       yield state.copyWith(posts: updatedPosts, status: FeedStatus.loaded);
     } catch (err) {
