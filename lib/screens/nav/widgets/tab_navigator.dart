@@ -3,6 +3,7 @@ import 'package:demoinsta/config/custom_router.dart';
 import 'package:demoinsta/enums/enums.dart';
 import 'package:demoinsta/repositories/repositories.dart';
 import 'package:demoinsta/screens/create_post/cubit/create_post_cubit.dart';
+import 'package:demoinsta/screens/feed/bloc/feed_bloc.dart';
 import 'package:demoinsta/screens/profile/bloc/profile_bloc.dart';
 import 'package:demoinsta/screens/screens.dart';
 import 'package:demoinsta/screens/search/cubit/search_cubit.dart';
@@ -45,7 +46,13 @@ class TabNavigator extends StatelessWidget {
   Widget _getScreen(BuildContext context, BottomNavItem item) {
     switch (item) {
       case BottomNavItem.feed:
-        return FeedScreen();
+        return BlocProvider<FeedBloc>(
+          create: (context) => FeedBloc(
+            postRepository: context.read<PostRepository>(),
+            authBloc: context.read<AuthBloc>(),
+          )..add(FeedFetchPosts()),
+          child: FeedScreen(),
+        );
       case BottomNavItem.search:
         return BlocProvider<SearchCubit>(
           create: (context) => SearchCubit(
