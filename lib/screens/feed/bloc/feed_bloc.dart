@@ -23,9 +23,7 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
         super(FeedState.initial());
 
   @override
-  Stream<FeedState> mapEventToState(
-    FeedEvent event,
-  ) async* {
+  Stream<FeedState> mapEventToState(FeedEvent event) async* {
     if (event is FeedFetchPosts) {
       yield* _mapFeedFetchPostsToState();
     } else if (event is FeedPaginatePosts) {
