@@ -4,6 +4,7 @@ import 'package:demoinsta/cubits/cubits.dart';
 import 'package:demoinsta/repositories/repositories.dart';
 import 'package:demoinsta/screens/profile/bloc/profile_bloc.dart';
 import 'package:demoinsta/screens/profile/widgets/widgets.dart';
+import 'package:demoinsta/screens/screens.dart';
 import 'package:demoinsta/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -159,7 +160,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                         (context, index) {
                           final post = state.posts[index];
                           return GestureDetector(
-                            onTap: () {},
+                            onTap: () => Navigator.of(context).pushNamed(
+                              CommentsScreen.routeName,
+                              arguments: CommentsScreenArgs(post: post),
+                            ),
                             child: CachedNetworkImage(
                               imageUrl: post.imageUrl,
                               fit: BoxFit.cover,

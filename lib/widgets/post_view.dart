@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:demoinsta/screens/profile/profile_screen.dart';
+import 'package:demoinsta/screens/screens.dart';
 import 'package:demoinsta/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:demoinsta/models/models.dart';
@@ -74,7 +75,10 @@ class PostView extends StatelessWidget {
             ),
             IconButton(
               icon: const Icon(Icons.comment_outlined),
-              onPressed: () {},
+              onPressed: () => Navigator.of(context).pushNamed(
+                CommentsScreen.routeName,
+                arguments: CommentsScreenArgs(post: post),
+              ),
             ),
           ],
         ),
