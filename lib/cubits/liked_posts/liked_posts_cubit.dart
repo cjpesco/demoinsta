@@ -41,7 +41,9 @@ class LikedPostsCubit extends Cubit<LikedPostsState> {
 
   void unlikePost({@required Post post}) {
     _postRepository.deleteLike(
-        postId: post.id, userId: _authBloc.state.user.uid);
+      postId: post.id,
+      userId: _authBloc.state.user.uid,
+    );
 
     emit(
       state.copyWith(

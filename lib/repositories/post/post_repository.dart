@@ -29,13 +29,13 @@ class PostRepository extends BasePostRepository {
   void createLike({
     @required Post post,
     @required String userId,
-  }) {
-    _firebaseFirestore
+  }) async {
+    await _firebaseFirestore
         .collection(Paths.posts)
         .doc(post.id)
         .update({'likes': FieldValue.increment(1)});
 
-    _firebaseFirestore
+    await _firebaseFirestore
         .collection(Paths.likes)
         .doc(post.id)
         .collection(Paths.postLikes)
@@ -132,13 +132,13 @@ class PostRepository extends BasePostRepository {
   }
 
   @override
-  void deleteLike({@required String postId, @required String userId}) {
-    _firebaseFirestore
+  void deleteLike({@required String postId, @required String userId}) async {
+    await _firebaseFirestore
         .collection(Paths.posts)
         .doc(postId)
         .update({'likes': FieldValue.increment(-1)});
 
-    _firebaseFirestore
+    await _firebaseFirestore
         .collection(Paths.likes)
         .doc(postId)
         .collection(Paths.postLikes)

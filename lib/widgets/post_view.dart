@@ -66,10 +66,7 @@ class PostView extends StatelessWidget {
           children: [
             IconButton(
               icon: isLiked
-                  ? const Icon(
-                      Icons.favorite,
-                      color: Colors.red,
-                    )
+                  ? const Icon(Icons.favorite, color: Colors.red)
                   : const Icon(Icons.favorite_outline),
               onPressed: onLike,
             ),
