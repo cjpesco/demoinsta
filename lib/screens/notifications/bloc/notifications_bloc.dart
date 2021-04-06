@@ -52,4 +52,11 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
       status: NotificationsStatus.loaded,
     );
   }
+
+  void removeNotification({@required Notif notification}) {
+    _notificationRepository.deleteNotification(
+      notificationId: notification.id,
+      userId: _authBloc.state.user.uid,
+    );
+  }
 }

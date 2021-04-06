@@ -29,6 +29,7 @@ class NotificationTile extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
+            TextSpan(text: ' '),
             TextSpan(text: _getText(notification)),
           ],
         ),

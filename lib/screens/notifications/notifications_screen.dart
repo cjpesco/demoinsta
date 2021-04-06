@@ -22,7 +22,23 @@ class NotificationsScreen extends StatelessWidget {
                 itemCount: state.notifications.length,
                 itemBuilder: (BuildContext context, int index) {
                   final notification = state.notifications[index];
-                  return NotificationTile(notification: notification);
+                  return Dismissible(
+                    key: Key(notification.id),
+                    direction: DismissDirection.endToStart,
+                    onDismissed: (direction) => context
+                        .read<NotificationsBloc>()
+                        .removeNotification(notification: notification),
+                    background: Container(
+                      alignment: Alignment.centerRight,
+                      padding: EdgeInsets.only(right: 5.0),
+                      child: Text(
+                        'Swipe to delete',
+                        style: TextStyle(color: Colors.white, fontSize: 17.0),
+                      ),
+                      color: Colors.red,
+                    ),
+                    child: NotificationTile(notification: notification),
+                  );
                 },
               );
 

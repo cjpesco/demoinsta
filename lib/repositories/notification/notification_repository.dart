@@ -22,4 +22,14 @@ class NotificationRepository extends BaseNotificationRepository {
           (snap) => snap.docs.map((doc) => Notif.fromDocument(doc)).toList(),
         );
   }
+
+  @override
+  void deleteNotification({String notificationId, String userId}) {
+    _firebaseFirestore
+        .collection(Paths.notifications)
+        .doc(userId)
+        .collection(Paths.userNotifications)
+        .doc(notificationId)
+        .delete();
+  }
 }
