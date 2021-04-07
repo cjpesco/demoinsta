@@ -13,10 +13,14 @@ class FeedScreen extends StatefulWidget {
 
 class _FeedScreenState extends State<FeedScreen> {
   ScrollController _scrollController;
+  PageController _featuresPageController;
 
   @override
   void initState() {
     super.initState();
+    _featuresPageController =
+        PageController(initialPage: 0, viewportFraction: 0.8);
+
     _scrollController = ScrollController()
       ..addListener(() {
         if (_scrollController.offset >=
@@ -78,31 +82,51 @@ class _FeedScreenState extends State<FeedScreen> {
         return RefreshIndicator(
           onRefresh: () async {
             context.read<FeedBloc>().add(FeedFetchPosts());
+            context.read<FeedBloc>().add(FeedFetchFeaturePosts());
             return true;
           },
-          child: ListView.builder(
+          child: CustomScrollView(
             controller: _scrollController,
-            itemCount: state.posts.length,
-            itemBuilder: (BuildContext context, int index) {
-              final post = state.posts[index];
-              final likedPostsState = context.watch<LikedPostsCubit>().state;
-              final isLiked = likedPostsState.likedPostIds.contains(post.id);
-              final recentlyLiked =
-                  likedPostsState.recentlyLikedPostIds.contains(post.id);
+            slivers: [
+              SliverToBoxAdapter(
+                child: PostsCarousel(
+                  pageController: _featuresPageController,
+                  title: 'Discover',
+                  posts: state.featurePosts,
+                ),
+              ),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final post = state.posts[index];
+                    final likedPostsState =
+                        context.watch<LikedPostsCubit>().state;
+                    final isLiked =
+                        likedPostsState.likedPostIds.contains(post.id);
 
-              return PostView(
-                post: post,
-                isLiked: isLiked,
-                recentlyLiked: recentlyLiked,
-                onLike: () {
-                  if (isLiked) {
-                    context.read<LikedPostsCubit>().unlikePost(post: post);
-                  } else {
-                    context.read<LikedPostsCubit>().likePost(post: post);
-                  }
-                },
-              );
-            },
+                    return PostView(
+                      post: post,
+                      isLiked: isLiked,
+                      onFeature: () {
+                        context
+                            .read<FeaturePostsCubit>()
+                            .featurePost(post: post);
+                      },
+                      onLike: () {
+                        if (isLiked) {
+                          context
+                              .read<LikedPostsCubit>()
+                              .unlikePost(post: post);
+                        } else {
+                          context.read<LikedPostsCubit>().likePost(post: post);
+                        }
+                      },
+                    );
+                  },
+                  childCount: state.posts.length,
+                ),
+              ),
+            ],
           ),
         );
     }

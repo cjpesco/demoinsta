@@ -27,6 +27,7 @@ class ProfileScreen extends StatefulWidget {
           postRepository: context.read<PostRepository>(),
           authBloc: context.read<AuthBloc>(),
           likedPostsCubit: context.read<LikedPostsCubit>(),
+          featurePostsCubit: context.read<FeaturePostsCubit>(),
         )..add(ProfileLoadUser(userId: args.userId)),
         child: ProfileScreen(),
       ),
@@ -184,6 +185,11 @@ class _ProfileScreenState extends State<ProfileScreen>
 
                           return PostView(
                             post: post,
+                            onFeature: () {
+                              context
+                                  .read<FeaturePostsCubit>()
+                                  .featurePost(post: post);
+                            },
                             isLiked: isLiked,
                             onLike: () {
                               if (isLiked) {

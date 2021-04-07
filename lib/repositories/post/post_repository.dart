@@ -19,6 +19,20 @@ class PostRepository extends BasePostRepository {
   }
 
   @override
+  Future<void> featurePost({Post post}) async {
+    await _firebaseFirestore
+        .collection(Paths.features)
+        .doc(post.id)
+        .set(post.toDocument());
+  }
+
+  // @override
+  // void deleteFeaturePost(
+  //     {@required String postId, @required String userId}) async {
+  //   await _firebaseFirestore.collection(Paths.features).doc(postId).delete();
+  // }
+
+  @override
   Future<void> createComment(
       {@required Post post, @required Comment comment}) async {
     await _firebaseFirestore
@@ -112,7 +126,7 @@ class PostRepository extends BasePostRepository {
           .doc(userId)
           .collection(Paths.userFeed)
           .orderBy('date', descending: true)
-          .limit(3)
+          .limit(5)
           .get();
     } else {
       final lastPostDoc = await _firebaseFirestore
@@ -131,7 +145,7 @@ class PostRepository extends BasePostRepository {
           .collection(Paths.userFeed)
           .orderBy('date', descending: true)
           .startAfterDocument(lastPostDoc)
-          .limit(3)
+          .limit(5)
           .get();
     }
 
@@ -177,5 +191,38 @@ class PostRepository extends BasePostRepository {
         .collection(Paths.postLikes)
         .doc(userId)
         .delete();
+  }
+
+  @override
+  Future<List<Post>> getFeatureFeed({String lastPostId}) async {
+    QuerySnapshot featurePostsSnap;
+    if (lastPostId == null) {
+      featurePostsSnap = await _firebaseFirestore
+          .collection(Paths.features)
+          .orderBy('date', descending: true)
+          .limit(10)
+          .get();
+    } else {
+      final lastPostDoc = await _firebaseFirestore
+          .collection(Paths.features)
+          .doc(lastPostId)
+          .get();
+
+      if (!lastPostDoc.exists) {
+        return [];
+      }
+      featurePostsSnap = await _firebaseFirestore
+          .collection(Paths.features)
+          .orderBy('date', descending: true)
+          .startAfterDocument(lastPostDoc)
+          .limit(10)
+          .get();
+    }
+
+    final featurePosts = Future.wait(
+      featurePostsSnap.docs.map((doc) => Post.fromDocument(doc)).toList(),
+    );
+
+    return featurePosts;
   }
 }

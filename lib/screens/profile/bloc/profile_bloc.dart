@@ -17,6 +17,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final PostRepository _postRepository;
   final AuthBloc _authBloc;
   final LikedPostsCubit _likedPostsCubit;
+  final FeaturePostsCubit _featurePostsCubit;
 
   StreamSubscription<List<Future<Post>>> _postsSubscription;
 
@@ -25,10 +26,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     @required PostRepository postRepository,
     @required AuthBloc authBloc,
     @required LikedPostsCubit likedPostsCubit,
+    @required FeaturePostsCubit featurePostsCubit,
   })  : _userRepository = userRepository,
         _postRepository = postRepository,
         _authBloc = authBloc,
         _likedPostsCubit = likedPostsCubit,
+        _featurePostsCubit = featurePostsCubit,
         super(ProfileState.initial());
 
   @override

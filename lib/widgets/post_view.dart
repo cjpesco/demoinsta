@@ -10,6 +10,7 @@ class PostView extends StatelessWidget {
   final Post post;
   final bool isLiked;
   final VoidCallback onLike;
+  final VoidCallback onFeature;
   final bool recentlyLiked;
 
   const PostView({
@@ -17,6 +18,7 @@ class PostView extends StatelessWidget {
     @required this.post,
     @required this.isLiked,
     @required this.onLike,
+    @required this.onFeature,
     this.recentlyLiked = false,
   }) : super(key: key);
 
@@ -76,6 +78,10 @@ class PostView extends StatelessWidget {
                 CommentsScreen.routeName,
                 arguments: CommentsScreenArgs(post: post),
               ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.star_border_outlined),
+              onPressed: onFeature,
             ),
           ],
         ),

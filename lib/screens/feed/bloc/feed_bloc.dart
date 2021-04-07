@@ -16,15 +16,26 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
   final PostRepository _postRepository;
   final AuthBloc _authBloc;
   final LikedPostsCubit _likedPostsCubit;
+  final FeaturePostsCubit _featurePostsCubit;
+
+  StreamSubscription<List<Future<Post>>> _featurePostsSubscription;
 
   FeedBloc({
     @required PostRepository postRepository,
     @required AuthBloc authBloc,
     @required LikedPostsCubit likedPostsCubit,
+    @required FeaturePostsCubit featurePostsCubit,
   })  : _postRepository = postRepository,
         _authBloc = authBloc,
         _likedPostsCubit = likedPostsCubit,
+        _featurePostsCubit = featurePostsCubit,
         super(FeedState.initial());
+
+  @override
+  Future<void> close() {
+    _featurePostsSubscription.cancel();
+    return super.close();
+  }
 
   @override
   Stream<FeedState> mapEventToState(FeedEvent event) async* {
@@ -32,6 +43,10 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
       yield* _mapFeedFetchPostsToState();
     } else if (event is FeedPaginatePosts) {
       yield* _mapFeedPaginatePostsToState();
+    } else if (event is FeedFetchFeaturePosts) {
+      yield* _mapFeedFetchFeaturePostsToState();
+    } else if (event is FeedPaginateFeaturePosts) {
+      yield* _mapFeedPaginateFeaturePostsToState();
     }
   }
 
@@ -78,6 +93,52 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
       _likedPostsCubit.updateLikedPosts(postIds: likedPostsIds);
 
       yield state.copyWith(posts: updatedPosts, status: FeedStatus.loaded);
+    } catch (err) {
+      yield state.copyWith(
+        status: FeedStatus.error,
+        failure: const Failure(message: 'We were unable to load your feed.'),
+      );
+    }
+  }
+
+  Stream<FeedState> _mapFeedFetchFeaturePostsToState() async* {
+    yield state.copyWith(featurePosts: [], status: FeedStatus.loading);
+
+    try {
+      final lastPostId =
+          state.featurePosts.isNotEmpty ? state.featurePosts.last.id : null;
+      final featurePosts = await _postRepository.getFeatureFeed(
+        lastPostId: lastPostId,
+      );
+
+      final updatedFeaturePosts = List<Post>.from(state.featurePosts)
+        ..addAll(featurePosts);
+
+      yield state.copyWith(
+          featurePosts: updatedFeaturePosts, status: FeedStatus.loaded);
+    } catch (err) {
+      yield state.copyWith(
+        status: FeedStatus.error,
+        failure: const Failure(message: 'We were unable to load your feed.'),
+      );
+    }
+  }
+
+  Stream<FeedState> _mapFeedPaginateFeaturePostsToState() async* {
+    yield state.copyWith(featurePosts: [], status: FeedStatus.paginating);
+
+    try {
+      final lastPostId =
+          state.featurePosts.isNotEmpty ? state.featurePosts.last.id : null;
+      final featurePosts = await _postRepository.getFeatureFeed(
+        lastPostId: lastPostId,
+      );
+
+      final updatedFeaturePosts = List<Post>.from(state.featurePosts)
+        ..addAll(featurePosts);
+
+      yield state.copyWith(
+          featurePosts: updatedFeaturePosts, status: FeedStatus.loaded);
     } catch (err) {
       yield state.copyWith(
         status: FeedStatus.error,

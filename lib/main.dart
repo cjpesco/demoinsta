@@ -51,6 +51,12 @@ class MyApp extends StatelessWidget {
               authBloc: context.read<AuthBloc>(),
             ),
           ),
+          BlocProvider<FeaturePostsCubit>(
+            create: (context) => FeaturePostsCubit(
+              postRepository: context.read<PostRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            ),
+          ),
         ],
         child: MaterialApp(
           title: 'Flutter Instagram',

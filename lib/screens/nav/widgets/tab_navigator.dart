@@ -53,7 +53,8 @@ class TabNavigator extends StatelessWidget {
             postRepository: context.read<PostRepository>(),
             authBloc: context.read<AuthBloc>(),
             likedPostsCubit: context.read<LikedPostsCubit>(),
-          )..add(FeedFetchPosts()),
+            featurePostsCubit: context.read<FeaturePostsCubit>(),
+          )..add(FeedFetchFeaturePosts()),
           child: FeedScreen(),
         );
       case BottomNavItem.search:
@@ -87,6 +88,7 @@ class TabNavigator extends StatelessWidget {
             postRepository: context.read<PostRepository>(),
             authBloc: context.read<AuthBloc>(),
             likedPostsCubit: context.read<LikedPostsCubit>(),
+            featurePostsCubit: context.read<FeaturePostsCubit>(),
           )..add(
               ProfileLoadUser(userId: context.read<AuthBloc>().state.user.uid)),
           child: ProfileScreen(),
